@@ -7,22 +7,20 @@ local tbl = {
     "10477426577"  -- // Scroll Square
 }
 
-local WriteFile = writefile or write_file or write or nil
-local IsFile = isfile or syn_isfile or is_file or nil
+
 for i,v in pairs(tbl) do
-    if (WriteFile and IsFile) then
-        if not IsFile("Scryptiq/Assets/"..v..".png") then
+    if (FS_func.WriteFile and FS_func.IsFile) then
+        if not FS_func.IsFile("Scryptiq/Assets/"..v..".png") then
             local url = "https://raw.githubusercontent.com/Woutt/Scryptiq/main/Libex/Assets/"..v..".png"
-            WriteFile("Scryptiq/Assets/"..v..".png", game:HttpGet(url))
+            FS_func.WriteFile("Scryptiq/Assets/"..v..".png", game:HttpGet(url))
         end
     end
 end
 
 local GetAsset = function(x)
     local id = tbl[x]
-    local AssetFunc = getcustomasset or nil
-    if AssetFunc ~= nil then
-        return AssetFunc("Scryptiq/Assets/"..id..".png")
+    if FS_func.GetAssets ~= nil then
+        return FS_func.GetAssets("Scryptiq/Assets/"..id..".png")
     else
         return "rbxasset://"..id
     end
