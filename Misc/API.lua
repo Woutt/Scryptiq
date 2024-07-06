@@ -1,41 +1,7 @@
-if getgenv().API_Loaded ~= nil then return end
-getgenv().Request = syn.request or http_request or request or http.request or HttpPost or httprequest or function(...) end
+getgenv().API_Loaded = nil
+getgenv().Request = http_request or request or http.request or HttpPost or httprequest or function(...) end
 getgenv().Clipboard = write_clipboard or writeclipboard or setclipboard or set_clipboard or function(...) print(...) end
-
-
-getgenv().FileSystem = function(Directory, Contents)
-    local WriteFile = writefile or write_file or write or nil
-    local IsFolder = isfolder or syn_isfolder or is_folder or nil
-    local MakeFolder = makefolder or make_folder or createfolder or create_folder or nil
-    if WriteFile and IsFolder and MakeFolder then
-        if (Directory:sub(1, 1) == "/") then
-            Directory = Directory:sub(2, -1)
-        end
-
-        if (Directory:sub(1, 2) == "./") then
-            Directory = Directory:sub(3, -1)
-        end
-
-        if (not Directory:find("/")) then
-            return WriteFile(Directory, Contents)
-        end
-
-        local Directories = Directory:split("/")
-        local CurrentDirectory = ""
-        for i = 1, #Directories - 1 do
-            local Direct = Directories[i]
-            CurrentDirectory = CurrentDirectory .. "/" .. Direct
-            if (not IsFolder(CurrentDirectory)) then
-                MakeFolder(CurrentDirectory)
-            end
-        end
-        if Contents then
-            return WriteFile(Directory, Contents)
-        end
-    else
-        print("File System Isnt Supported With Your Exploit")
-    end
-end
+--local exploit,version = identifyexecutor()
 
 getgenv().settings = {TweenSpeed = 0.05}
 getgenv().Teleport = function(...)
@@ -49,12 +15,12 @@ end
 getgenv().SaveError = function(v)
     local datum = os.date("%Y/%m/%d")
     local time = os.date("%I:%M")
-    local path = tostring("Y-hub/errors/"..datum)
+    local path = tostring("Scryptiq/errors/"..datum)
 
-    if not isfile(path) then 
-        writefile(path, "") 
+    if not FS_func.IsFile(path) then 
+        FS_func.WriteFile(path, "") 
     end
-    appendfile(path, "["..time.."] "..v.."\n")
+    FS_func.AppendFile(path, "["..time.."] "..v.."\n")
 end
 
 getgenv().StringCreate = function(v)
@@ -152,8 +118,7 @@ getgenv().EmptyServer = function(x)
 end
 
 getgenv().Invite = function()
-    local x = loadstring(game:HttpGet("https://raw.githubusercontent.com/Woutt/Y-hub/main/Misc/Settings.lua"))()["Discord"]
-    local url = "https://discord.gg/"..x["inv"]
+    local url = "https://discord.gg/xF6fnGGyC6"
     if (Clipboard) then
         Clipboard(url)
     else
@@ -170,5 +135,7 @@ getgenv().Invite = function()
     end)
     return true
 end
+
+--https://discord.gg/xF6fnGGyC6
 
 getgenv().API_Loaded = true
