@@ -1,8 +1,18 @@
-return function(Directory, Contents)
-    local WriteFile = writefile or write_file or write or nil
-    local IsFolder = isfolder or is_folder or nil
-    local MakeFolder = makefolder or make_folder or createfolder or create_folder or nil
+local ReadFile = readfile or read_file or read or nil
+local WriteFile = writefile or write_file or write or nil
+local AppendFile = appendfile or append_file or nil
+local LoadFile = loadfile or load_file or nil
+local RunFile = runfile or run_file or nil
+local ListFiles = listfiles or list_files or list or nil
+local IsFile = isfile or is_file or nil
+local IsFolder = isfolder or is_folder or nil
+local MakeFolder = makefolder or make_folder or createfolder or create_folder or nil
+local DelFolder = delfolder or del_folder or deletefolder or delete_folder or nil
+local GetAssets = getcustomasset or getasset or get_custom_asset or nil
 
+
+
+local FileSystem = function(Directory, Contents)
     if WriteFile and IsFolder and MakeFolder then
         if (Directory:sub(1, 1) == "/") then
             Directory = Directory:sub(2, -1)
@@ -33,3 +43,21 @@ return function(Directory, Contents)
         print("File System Isnt Supported With Your Exploit")
     end
 end
+
+getgenv().FS_func = {
+    "ReadFile" = readfile or read_file or read or nil,
+    "WriteFile" = writefile or write_file or write or nil,
+    "AppendFile" = appendfile or append_file or nil,
+    "LoadFile" = loadfile or load_file or nil,
+    "RunFile" = runfile or run_file or nil,
+    "ListFiles" = listfiles or list_files or list or nil,
+    "IsFile" = isfile or is_file or nil,
+    "IsFolder" = isfolder or is_folder or nil,
+    "MakeFolder" = makefolder or make_folder or createfolder or create_folder or nil,
+    "DelFolder" = delfolder or del_folder or deletefolder or delete_folder or nil,
+    "GetAssets" = getcustomasset or getasset or get_custom_asset or nil,
+    "FileSystem" = FileSystem
+}
+
+
+return {}
