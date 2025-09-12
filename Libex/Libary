@@ -1,9 +1,3 @@
---[[ add this in the begin of the loadingstring in github
-    
-BPP_, code_,Libex_='_string.new',nil,function(b,c,d)local e=b[001991/85-d]local f=(107-0067*i)/(001810/(00128-208))local g=(4067+-0059)/102-37-(145-075)local e=c[001991/85]local x=P[(i*2/147-i)]local _=__[9*48/135+26/f*p+151]local obfuscate = "fake haha" end
-
---]]
-
 -- // Services
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
