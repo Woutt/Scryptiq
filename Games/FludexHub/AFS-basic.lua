@@ -1,10 +1,3 @@
-repeat wait("0."..math.random(1,2))
-until getgenv().Roblox_Updates == "o[tVTzrSQq]"
-repeat wait("0."..math.random(1,3))
-until tostring(game:GetService("CoreGui").RobloxGui.CoreValue.Value) == tostring(1865734982258)
-
-
-
 local var = {
     farm = "",
     KeySpam = {},
