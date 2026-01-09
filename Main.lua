@@ -6,8 +6,8 @@ FS_func.FileSystem("Scryptiq/Assets/")
 --//Load api and libex
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Woutt/Scryptiq/main/Misc/API.lua"))() 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Woutt/Scryptiq/main/Libex/Libary"))()
-
+print("OKKK")
 --//Find game
-local kick,String = function() game:GetService("Players").LocalPlayer:Kick("Scryptiq doesnt support this game, discord link copied to clipboard!") end
-local Error = pcall(function() String = game:HttpGet("https://raw.githubusercontent.com/Woutt/Scryptiq/main/Games/"..game.PlaceId) end)
-if Error == false then Invite() wait(3) kick() else loadstring(String)() end
+--local kick,String = function() game:GetService("Players").LocalPlayer:Kick("Scryptiq doesnt support this game, discord link copied to clipboard!") end
+--local Error = pcall(function() String = game:HttpGet("https://raw.githubusercontent.com/Woutt/Scryptiq/main/Games/"..game.PlaceId) end)
+--if Error == false then Invite() wait(3) kick() else loadstring(String)() end
