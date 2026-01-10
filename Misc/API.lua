@@ -118,23 +118,28 @@ getgenv().EmptyServer = function(x)
 end
 
 getgenv().Invite = function()
+    local HttpService = game:GetService("HttpService")
     local InfoLink = "https://raw.githubusercontent.com/Woutt/Scryptiq/refs/heads/main/Misc/Info.json"
-    local InfoDecode = game:GetService("HttpService"):JSONDecode(game:HttpGet(info_link)).discord
+    local InfoDecode = HttpService:JSONDecode(game:HttpGet(InfoLink)).discord
     local Link = "https://discord.gg/" .. InfoDecode
-    if (Clipboard) then
+
+    if Clipboard then
         Clipboard(Link)
     else
         return Link
     end
-    -- task.spawn(function()
-    --     for port=6463, 6472, 1 do
-    --         local inv = "http://127.0.0.1:"..tostring(port).."/rpc?v=1"
-    --         local t = {cmd = "INVITE_BROWSER", args = {["code"] = x["inv"]}, nonce = string.lower(game:GetService("HttpService"):GenerateGUID(false))}
-    --         local post = game:GetService("HttpService"):JSONEncode(t)
-    --         Request({Url = inv, Method = "POST", Body = post, Headers = {["Content-Type"] = "application/json", ["Origin"] = "https://discord.com"}})
-    --     end
-    -- end)
+
+    task.spawn(function()
+        for port = 6463, 6472 do
+            local inv = "http://127.0.0.1:" .. port .. "/rpc?v=1"
+            local t = {cmd = "INVITE_BROWSER",args = {code = InfoDecode},nonce = string.lower(HttpService:GenerateGUID(false))}
+            Request({
+                Url = inv,
+                Method = "POST",
+                Body = HttpService:JSONEncode(t),
+                Headers = {["Content-Type"] = "application/json",["Origin"] = "https://discord.com"}
+            })
+        end
+    end)
     return true
 end
-
-getgenv().API_Loaded = true
