@@ -126,14 +126,14 @@ getgenv().Invite = function()
     else
         return Link
     end
-    task.spawn(function()
-        for port=6463, 6472, 1 do
-            local inv = "http://127.0.0.1:"..tostring(port).."/rpc?v=1"
-            local t = {cmd = "INVITE_BROWSER", args = {["code"] = x["inv"]}, nonce = string.lower(game:GetService("HttpService"):GenerateGUID(false))}
-            local post = game:GetService("HttpService"):JSONEncode(t)
-            Request({Url = inv, Method = "POST", Body = post, Headers = {["Content-Type"] = "application/json", ["Origin"] = "https://discord.com"}})
-        end
-    end)
+    -- task.spawn(function()
+    --     for port=6463, 6472, 1 do
+    --         local inv = "http://127.0.0.1:"..tostring(port).."/rpc?v=1"
+    --         local t = {cmd = "INVITE_BROWSER", args = {["code"] = x["inv"]}, nonce = string.lower(game:GetService("HttpService"):GenerateGUID(false))}
+    --         local post = game:GetService("HttpService"):JSONEncode(t)
+    --         Request({Url = inv, Method = "POST", Body = post, Headers = {["Content-Type"] = "application/json", ["Origin"] = "https://discord.com"}})
+    --     end
+    -- end)
     return true
 end
 
