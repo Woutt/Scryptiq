@@ -9,5 +9,5 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Woutt/Scryptiq/main/L
 
 --//Find game
 --local kick = function() game:GetService("Players").LocalPlayer:Kick("Scryptiq doesnt support this game, discord link copied to clipboard!") end
---local Error = pcall(function() String = game:HttpGet("https://raw.githubusercontent.com/Woutt/Scryptiq/main/Games/"..game.PlaceId) end)
+--local Error = pcall(function() String = game:HttpGet("https://raw.githubusercontent.com/Woutt/Scryptiq/main/Games/"..game.PlaceId..".lua") end)
 --if Error == false then Invite() wait(3) kick() else loadstring(String)() end
