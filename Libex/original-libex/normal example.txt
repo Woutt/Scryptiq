@@ -1,0 +1,398 @@
+-- // Start Library
+local Library = SereineAPI.UI.new({
+    Title = "Sereine",
+    Bottom = "D-Day",
+    Folder = "Sereine/DDay"
+}):Initialise()
+
+-- // Create Groups
+local _, Dashboard, AimingGUI, WeaponManager = Library:NewGroup({
+    {Name = "Dashboard", Icon = "contact"},
+    {Name = "Aiming", Icon = "skull"},
+    {Name = "Weapon Manager", Icon = "electricity"}
+})
+
+-- // Dashboard
+do
+    
+end
+
+-- // Aiming
+do
+    -- // Vars
+    local AimingSettings = Aiming.Settings
+
+    -- //
+    AimingGUI:Toggle({
+        Name = "Enabled",
+        Default = AimingSettings.Enabled,
+        Flag = "AimingEnabled",
+        Callback = function(Value)
+            AimingSettings.Enabled = Value
+        end
+    })
+    AimingGUI:Toggle({
+        Name = "Visible Check",
+        Flag = "AimingVisibleCheck",
+        Default = AimingSettings.VisibleCheck,
+        Callback = function(Value)
+            AimingSettings.VisibleCheck = Value
+        end
+    })
+    AimingGUI:Slider({
+        Name = "Hit Chance",
+        Min = 0,
+        Max = 100,
+        Default = 100,
+        Flag = "AimingHitChance",
+        Callback = function(Value)
+            AimingSettings.HitChance = Value
+        end
+    })
+
+    -- //
+    AimingGUI:Seperator()
+
+    -- //
+    local TargetPart = AimingGUI:TextBox({
+        Name = "Target Part Name"
+    })
+    AimingGUI:Dropdown({
+        Name = "Target Parts",
+        Options = typeof(AimingSettings.TargetPart) == "table" and AimingSettings.TargetPart or {AimingSettings.TargetPart},
+        Default = TargetPart:Get(),
+        Callback = function(Value)
+            TargetPart:Set(Value)
+        end
+    })
+    AimingGUI:Button({
+        Name = "Add",
+        Callback = function()
+            -- // Convert target part to array
+            if (typeof(AimingSettings.TargetPart) == "table") then
+                AimingSettings.TargetPart = {AimingSettings.TargetPart}
+            end
+
+            -- // Check if already there
+            local Part = TargetPart:Get()
+            if (table.find(AimingSettings.TargetPart, Part)) then
+                return Library:Notification({
+                    Title = "Add Target Part",
+                    Content = "Target Part already added!",
+                    Delay = 3
+                })
+            end
+
+            -- // Add
+            table.insert(AimingSettings.TargetPart, Part)
+
+            -- // Notify
+            Library:Notification({
+                Title = "Add Target Part",
+                Content = "Target Part added!",
+                Delay = 3
+            })
+        end
+    })
+    AimingGUI:Button({
+        Name = "Remove",
+        Callback = function()
+            -- // Convert target part to array
+            if (typeof(AimingSettings.TargetPart) == "table") then
+                AimingSettings.TargetPart = {AimingSettings.TargetPart}
+            end
+
+            -- // Check if already there
+            local Part = TargetPart:Get()
+            local PartI = table.find(AimingSettings.TargetPart, Part)
+            if (not PartI) then
+                return Library:Notification({
+                    Title = "Remove Target Part",
+                    Content = "Target Part has not been added!",
+                    Delay = 3
+                })
+            end
+
+            -- // Add
+            table.remove(AimingSettings.TargetPart, PartI)
+
+            -- // Notify
+            Library:Notification({
+                Title = "Remove Target Part",
+                Content = "Target Part removed!",
+                Delay = 3
+            })
+        end
+    })
+
+    -- //
+    AimingGUI:Seperator()
+    local FOVSettings = AimingSettings.FOVSettings
+
+    -- //
+    AimingGUI:Toggle({
+        Name = "FOV Enabled",
+        Default = FOVSettings.Enabled,
+        Flag = "AimingFOVEnabled",
+        Callback = function(Value)
+            FOVSettings.Enabled = Value
+        end
+    })
+    AimingGUI:Slider({
+        Name = "FOV Scale",
+        Min = 0,
+        Max = 360,
+        Default = FOVSettings.Scale,
+        Flag = "AimingFOVScale",
+        Callback = function(Value)
+            FOVSettings.Scale = Value
+        end
+    })
+    AimingGUI:Slider({
+        Name = "FOV Sides",
+        Min = 3,
+        Max = 50,
+        Default = FOVSettings.Sides,
+        Flag = "AimingFOVSides",
+        Callback = function(Value)
+            FOVSettings.Sides = Value
+        end
+    })
+    AimingGUI:ColorPicker({
+        Name = "FOV Colour",
+        Default = FOVSettings.Colour,
+        Flag = "AimingFOVColour",
+        Callback = function(Value)
+            FOVSettings.Colour = Value
+        end
+    })
+
+    -- //
+    AimingGUI:Seperator()
+    local TracerSettings = AimingSettings.TracerSettings
+
+    -- //
+    AimingGUI:Toggle({
+        Name = "Tracer Enabled",
+        Default = TracerSettings.Enabled,
+        Flag = "AimingTracerEnabled",
+        Callback = function(Value)
+            TracerSettings.Enabled = Value
+        end
+    })
+    AimingGUI:ColorPicker({
+        Name = "Tracer Colour",
+        Default = TracerSettings.Colour,
+        Flag = "AimingTracerColour",
+        Callback = function(Value)
+            TracerSettings.Colour = Value
+        end
+    })
+
+    -- //
+    AimingGUI:Seperator()
+    local Ignored = AimingSettings.Ignored
+
+    -- //
+    AimingGUI:Toggle({
+        Name = "Whitelist Players",
+        Default = Ignored.WhitelistMode.Players,
+        Callback = function(Value)
+            Ignored.WhitelistMode.Players = Value
+        end
+    })
+    AimingGUI:Toggle({
+        Name = "Whitelist Teams",
+        Default = Ignored.WhitelistMode.Teams,
+        Callback = function(Value)
+            Ignored.WhitelistMode.Teams = Value
+        end
+    })
+
+    -- //
+    AimingGUI:Seperator()
+
+    -- //
+    local function GetTeams()
+        -- // Get the teams
+        local _Teams = Teams:GetTeams()
+
+        -- // Convert to string
+        for i, v in ipairs(_Teams) do
+            _Teams[i] = v.Name
+        end
+
+        -- // Return
+        return _Teams
+    end
+    local TeamSelect = AimingGUI:Dropdown({
+        Name = "Select Team",
+        Options = GetTeams()
+    })
+    AimingGUI:Button({
+        Name = "Refresh Teams",
+        Callback = function()
+            TeamSelect:Set(GetTeams())
+        end
+    })
+    AimingGUI:Button({
+        Name = "Ignore Team",
+        Callback = function()
+            -- // Make sure we have a team
+            local SelectedTeam = Teams:FindFirstChild(TeamSelect:Get() or "")
+            if (not SelectedTeam) then
+                return Library:Notification({
+                    Title = "Ignore Team",
+                    Content = "Please select a team",
+                    Delay = 2
+                })
+            end
+
+            -- // Make sure is not already ignored
+            local TeamObj = {
+                Team = SelectedTeam,
+                TeamColor = SelectedTeam.TeamColor
+            }
+            local TeamI = table.find(Ignored.Teams, TeamObj)
+            if (TeamI) then
+                return Library:Notification({
+                    Title = "Ignore Team",
+                    Content = "Team already ignored",
+                    Delay = 2
+                })
+            end
+
+            -- // Ignore
+            table.insert(Ignored.Teams, TeamObj)
+
+            -- // Notify
+            Library:Notification({
+                Title = "Ignore Team",
+                Content = "Ignored team",
+                Delay = 2
+            })
+        end
+    })
+    AimingGUI:Button({
+        Name = "Unignore Team",
+        Callback = function()
+            -- // Make sure we have a team
+            local SelectedTeam = Teams:FindFirstChild(TeamSelect:Get() or "")
+            if (not SelectedTeam) then
+                return Library:Notification({
+                    Title = "Unignore Team",
+                    Content = "Please select a team",
+                    Delay = 2
+                })
+            end
+
+            -- // Make sure is not already ignored
+            local TeamObj = {
+                Team = SelectedTeam,
+                TeamColor = SelectedTeam.TeamColor
+            }
+            local TeamI = table.find(Ignored.Teams, TeamObj)
+            if (not TeamI) then
+                return Library:Notification({
+                    Title = "Unignore Team",
+                    Content = "Team not ignored",
+                    Delay = 2
+                })
+            end
+
+            -- // Ignore
+            table.remove(Ignored.Teams, TeamI)
+
+            -- // Notify
+            Library:Notification({
+                Title = "Unignore Team",
+                Content = "Unignored team",
+                Delay = 2
+            })
+        end
+    })
+    AimingGUI:Toggle({
+        Name = "Ignore Local Team",
+        Default = Ignored.IgnoreLocalTeam,
+        Callback = function(Value)
+            Ignored.IgnoreLocalTeam = Value
+        end
+    })
+
+    -- //
+    AimingGUI:Seperator()
+
+    -- //
+    local PlayerSelect = AimingGUI:Dropdown({
+        Name = "Select Player",
+        Options = "Players"
+    })
+    AimingGUI:Button({
+        Name = "Ignore Player",
+        Callback = function()
+            -- // Make sure we have a player
+            local SelectedPlayer = PlayerSelect:Get()
+            if (not SelectedPlayer) then
+                return Library:Notification({
+                    Title = "Ignore Player",
+                    Content = "Please select a player",
+                    Delay = 2
+                })
+            end
+
+            -- // Make sure is not already ignored
+            local PlayersI = table.find(Ignored.Players, SelectedPlayer)
+            if (PlayersI) then
+                return Library:Notification({
+                    Title = "Ignore Player",
+                    Content = "Player already ignored",
+                    Delay = 2
+                })
+            end
+
+            -- // Ignore
+            table.insert(Ignored.Players, SelectedPlayer)
+
+            -- // Notify
+            Library:Notification({
+                Title = "Ignore Player",
+                Content = "Player ignored",
+                Delay = 2
+            })
+        end
+    })
+    AimingGUI:Button({
+        Name = "Unignore Player",
+        Callback = function()
+            -- // Make sure we have a player
+            local SelectedPlayer = PlayerSelect:Get()
+            if (not SelectedPlayer) then
+                return Library:Notification({
+                    Title = "Unignore Player",
+                    Content = "Please select a player",
+                    Delay = 2
+                })
+            end
+
+            -- // Make sure is not already ignored
+            local PlayersI = table.find(Ignored.Players, SelectedPlayer)
+            if (not PlayersI) then
+                return Library:Notification({
+                    Title = "Unignore Player",
+                    Content = "Player not ignored",
+                    Delay = 2
+                })
+            end
+
+            -- // Remove
+            table.remove(Ignored.Players, PlayersI)
+
+            -- // Notify
+            Library:Notification({
+                Title = "Unignore Player",
+                Content = "Player unignored",
+                Delay = 2
+            })
+        end
+    })
+end
